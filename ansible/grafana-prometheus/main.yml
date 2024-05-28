@@ -1,0 +1,9 @@
+---
+- hosts: main
+  become: yes
+  roles:
+    - role: role1
+    - role: role2
+      vars:
+        prometheus_installation: false
+        alertmanager_installation: true
