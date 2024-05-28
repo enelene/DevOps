@@ -1,0 +1,10 @@
+---
+grafana_port: 3000
+grafana_listen_address: 0.0.0.0
+grafana_admin_user: "admin"
+grafana_admin_password: "admin"
+grafana_admin_url: http://localhost:3000
+default_port: 80
+prometheus_url: http://localhost:9090
+domain_name: grafana.devops.tbc
+ip_address : 192.168.77.21
