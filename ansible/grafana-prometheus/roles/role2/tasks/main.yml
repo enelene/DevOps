@@ -1,0 +1,77 @@
+  - name: Create directories
+    file:
+      path: "{{ item.path }}"
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+    loop:
+      - { path: "/etc/{{ service_name }}" }
+      - { path: "/var/lib/{{ service_name }}" }
+    when: prometheus_installation or alertmanager_installation
+
+  - name: Download {{ service_name }} archive
+    get_url:
+      url: "{{ service_url }}"
+      dest: "/tmp/{{ service_name }}-{{ service_version }}.linux-amd64.tar.gz"
+    when: prometheus_installation or alertmanager_installation
+
+  - name: Extract {{ service_name }} archive
+    become: yes
+    unarchive:
+      src: "/tmp/{{ service_name }}-{{ service_version }}.linux-amd64.tar.gz"
+      dest: "/tmp"
+      remote_src: yes
+    when: prometheus_installation or alertmanager_installation
+
+  - name: Copy {{ service_name }} binaries
+    become: yes
+    command:
+      cmd: cp /tmp/{{ service_name }}-{{ service_version }}.linux-amd64/{{ item }} /usr/local/bin/{{ item }}
+    loop: "{{ service_binaries }}"
+    when: prometheus_installation or alertmanager_installation
+
+  - name: Copy alertmanager.yml
+    become: yes
+    command:
+      cmd: cp /tmp/{{ service_name }}-{{ service_version }}.linux-amd64/alertmanager.yml /etc/alertmanager
+    loop: "{{ service_binaries }}"
+    when: alertmanager_installation
+
+  - name: Copy prometheus libraries
+    become: yes
+    command:
+      cmd: cp -r /tmp/{{ service_name }}-{{ service_version }}.linux-amd64/{{ item }} /etc/{{ service_name }}/{{ item }}
+    with_items:
+      - consoles
+      - console_libraries
+    when: prometheus_installation
+
+  - name: Create prometheus configuration file
+    become: yes
+    template:
+      src: "{{ service_name }}.yml.j2"
+      dest: "{{ service_config }}"
+      owner: root
+      group: root
+      mode: 0644
+    when: prometheus_installation 
+
+  - name: Create {{ service_name }} systemd service file
+    become: yes
+    template:
+      src: "{{ service_name }}.service.j2"
+      dest: "/etc/systemd/system/{{ service_name }}.service"
+      owner: root
+      group: root
+      mode: 0644
+    when: prometheus_installation or alertmanager_installation
+
+  - name: Reload systemd
+    become: yes
+    systemd:
+      daemon_reload: yes
+    notify:
+      - Start {{ service_name }}
+      - Enable {{ service_name }}
+    when: prometheus_installation or alertmanager_installation
