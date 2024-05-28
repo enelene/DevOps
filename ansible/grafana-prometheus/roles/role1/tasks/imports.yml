@@ -1,0 +1,18 @@
+- name: Import Node exporter dashboard in Grafana
+  community.grafana.grafana_dashboard:
+    grafana_url: "{{grafana_admin_url}}"
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_password }}"
+    dashboard_id: 1860
+    overwrite: true
+
+- name: Create Prometheus datastore in grafana
+  grafana_datasource:
+    name: Prometheus
+    ds_type: prometheus
+    access: proxy
+    ds_url: "{{http://localhost:9090}}"
+    url: "{{ grafana_admin_url }}"
+    url_username: "{{ grafana_admin_user }}"
+    url_password: "{{ grafana_admin_password }}"
+    state: present

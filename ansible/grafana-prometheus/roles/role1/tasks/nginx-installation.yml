@@ -1,0 +1,10 @@
+- name: install Nginx
+  apt: name=nginx state=latest
+  notify:
+    - restart nginx
+
+- name: Ensure NGINX is started and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: yes

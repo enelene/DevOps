@@ -1,0 +1,19 @@
+- name: Copy Nginx server block configuration for Grafana
+  template:
+    src: grafana-nginx.conf.j2
+    dest: /etc/nginx/sites-available/grafana-nginx
+  notify:
+    - restart nginx
+
+- name: Enable Nginx server block for Grafana
+  file:
+    src: /etc/nginx/sites-available/grafana-nginx
+    dest: /etc/nginx/sites-enabled/grafana-nginx
+    state: link
+  notify: restart nginx
+
+- name: Add entry to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ip_address}} {{domain_name}}"
+  notify: restart nginx
