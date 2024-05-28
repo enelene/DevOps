@@ -1,0 +1,14 @@
+---
+- name: install grafana-server
+  include_tasks: grafana-server.yml
+
+- name: install nginx
+  include_tasks: nginx-installation.yml
+
+- name: Nginx server block configuration for Grafana
+  include_tasks: nginx_server_block.yml
+  tags:
+    - nginx_block
+
+- name: import prometheus datastore and node exporter dashboard
+  include_tasks: imports.yml
