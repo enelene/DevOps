@@ -1,5 +1,5 @@
 [main]
-main ansible_host=192.168.77.21 ansible_user=root
+main ansible_host=<YOUR_WANTED_IP_ADDRESS> ansible_user=root
 
 
 
