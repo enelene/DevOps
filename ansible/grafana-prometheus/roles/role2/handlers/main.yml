@@ -1,0 +1,14 @@
+---
+- name: Start {{ service_name }}
+  become: yes
+  systemd:
+    name: "{{ service_name }}"
+    state: started
+  when: prometheus_installation or alertmanager_installation
+
+- name: Enable {{ service_name }}
+  become: yes
+  systemd:
+    name: "{{ service_name }}"
+    enabled: yes
+  when: prometheus_installation or alertmanager_installation
