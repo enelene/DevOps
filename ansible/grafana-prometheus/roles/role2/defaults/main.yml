@@ -1,0 +1,12 @@
+---
+prometheus_installation: false
+alertmanager_installation: false
+
+prometheus_version: "2.52.0"
+alertmanager_version: "0.27.0"
+service_name: "{{ 'prometheus' if prometheus_installation else 'alertmanager' }}"
+service_version: "{{ prometheus_version if prometheus_installation else alertmanager_version }}"
+service_url: "https://github.com/prometheus/{{ service_name }}/releases/download/v{{ service_version }}/{{ service_name }}-{{ service_version }}.linux-amd64.tar.gz"
+service_binaries: "{{ ['prometheus', 'promtool'] if prometheus_installation else ['alertmanager'] }}"
+service_config: "/etc/{{ service_name }}/{{ service_name }}.yml"
+
